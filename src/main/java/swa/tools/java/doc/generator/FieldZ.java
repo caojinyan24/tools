@@ -8,6 +8,15 @@ public class FieldZ {
     private String fieldName;
     private String desc;
 
+    public FieldZ() {
+    }
+
+    public FieldZ(FieldZ fieldZ) {
+        this.type = fieldZ.type;
+        this.fieldName = fieldZ.fieldName;
+        this.desc = fieldZ.desc;
+    }
+
     public String getDesc() {
         return desc;
     }

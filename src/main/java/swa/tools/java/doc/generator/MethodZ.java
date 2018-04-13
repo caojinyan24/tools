@@ -1,31 +1,32 @@
 package swa.tools.java.doc.generator;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Created by jinyan on 4/10/18 5:18 PM.
  */
 public class MethodZ {
-    private ClassZ request;
-    private ClassZ response;
+    private List<ClassZ> requests;
+    private List<ClassZ> responses;
     private String methodName;
     private Method method;
     private String methodDesc;
 
-    public ClassZ getRequest() {
-        return request;
+    public List<ClassZ> getRequests() {
+        return requests;
     }
 
-    public void setRequest(ClassZ request) {
-        this.request = request;
+    public void setRequests(List<ClassZ> requests) {
+        this.requests = requests;
     }
 
-    public ClassZ getResponse() {
-        return response;
+    public List<ClassZ> getResponses() {
+        return responses;
     }
 
-    public void setResponse(ClassZ response) {
-        this.response = response;
+    public void setResponses(List<ClassZ> responses) {
+        this.responses = responses;
     }
 
     public String getMethodName() {
@@ -55,9 +56,10 @@ public class MethodZ {
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("MethodZ{");
-        sb.append("request=").append(request);
-        sb.append(", response=").append(response);
+        sb.append("requests=").append(requests);
+        sb.append(", responses=").append(responses);
         sb.append(", methodName='").append(methodName).append('\'');
+        sb.append(", method=").append(method);
         sb.append(", methodDesc='").append(methodDesc).append('\'');
         sb.append('}');
         return sb.toString();

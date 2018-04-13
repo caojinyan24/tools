@@ -51,6 +51,10 @@ public class InterfaceZ {
         return docName;
     }
 
+    public void setDocName(String docName) {
+        this.docName = docName;
+    }
+
     public Date getTime() {
         return time;
     }
@@ -65,10 +69,6 @@ public class InterfaceZ {
 
     public void setClazz(Class clazz) {
         this.clazz = clazz;
-    }
-
-    public void setDocName(String docName) {
-        this.docName = docName;
     }
 
     @Override

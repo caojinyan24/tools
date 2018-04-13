@@ -6,12 +6,14 @@ import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import swa.tools.Common.ToolsException;
+import swa.tools.java.doc.generator.test.CreditBankinfoExample;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +24,12 @@ public class Generator {
     private static final Logger logger = LoggerFactory.getLogger(Generator.class);
     private Map<String, String> fileNameMap = Maps.newHashMap();
 
-    InterfaceZ interfaceZ = new InterfaceZ();
+    public static void main(String[] args) throws Exception {
+        Generator generator = new Generator();
+        generator.iteratorPath("/home/jinyan/Documents/github/toos/src/main/java/swa/tools");
+        List<FieldZ> fieldZS = generator.parseFieldZInfo(CreditBankinfoExample.class);
+        System.out.println(fieldZS);
+    }
 
     public void generator(String projectDir, String className, String methodName, String docName, String authorName) {
     }
@@ -31,7 +38,8 @@ public class Generator {
 
     }
 
-    public void parseInterfaceInfo(String projectDir, String className, String docName, String authorName, String methodName) throws Exception {
+    public InterfaceZ parseInterfaceInfo(String projectDir, String className, String docName, String authorName, String methodName) throws Exception {
+        InterfaceZ interfaceZ = new InterfaceZ();
 
         iteratorPath(projectDir);
         String fileName = fileNameMap.get(className);
@@ -56,7 +64,7 @@ public class Generator {
         }
         interfaceZ.setClassName(className);
         interfaceZ.setPackageName(packageName);
-
+        interfaceZ.setTime(new Date());
         interfaceZ.setClazz(Class.forName(packageName + "." + className));
 
 
@@ -94,14 +102,15 @@ public class Generator {
                 methodZ.setMethodDesc(descS);
                 methodZ.setMethod(method);
                 methodZ.setMethodName(method.getName());
-                methodZ.setRequest(parseClassZInfo(method.getParameterTypes()));
-                methodZ.setResponse(parseClassZInfo(new Class[]{method.getReturnType()}));
+                methodZ.setRequests(parseClassZInfo(method.getParameterTypes()));
+                methodZ.setResponses(parseClassZInfo(new Class[]{method.getReturnType()}));
                 methodZs.add(methodZ);
             }
         }
         interfaceZ.setMethodZS(methodZs);
+        System.out.println("interface:" + interfaceZ);
+        return interfaceZ;
     }
-
 
     // 列出根目录下的所有文件
     private void iteratorPath(String dir) {
@@ -119,7 +128,9 @@ public class Generator {
     }
 
     //请求或响应
-    private ClassZ parseClassZInfo(Class<?>[] classes) throws Exception {
+    // TODO: 4/13/18 添加多个参数解析
+    private List<ClassZ> parseClassZInfo(Class<?>[] classes) throws Exception {
+        List<ClassZ> list = Lists.newArrayList();
         ClassZ result = new ClassZ();
         // TODO: 4/10/18 根据classes 处理类嵌套的情况
         Class cla = classes[0];
@@ -136,7 +147,7 @@ public class Generator {
             result.setClazz(cla);
             result.setClassName(cla.getSimpleName());
             result.setClassDesc(cla.getSimpleName());
-            return result;
+            return Lists.newArrayList(result);
         }
 
         BufferedReader br = new BufferedReader(new FileReader(fileNameMap.get(cla.getSimpleName())));
@@ -162,13 +173,20 @@ public class Generator {
         result.setClazz(cla);
         result.setFieldList(parseFieldZInfo(cla));
 
-        return result;
+        return Lists.newArrayList(result);
     }
+
+    // TODO: 4/10/18 添加动态加载
+//    public static void compiler(String name) throws IOException {
+//        String javaPackageName = name.replace(".",File.separator)+".java";
+//        String javaAbsolutePath = classPath+javaPackageName;
+//        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+//        compiler.run(null,null,null,"-encoding","UTF-8","-classpath",jarAbsolutePath.toString(),javaAbsolutePath);
+//    }
 
     //请求或响应的属性
     private List<FieldZ> parseFieldZInfo(Class clazz) throws Exception {
         List<FieldZ> result = Lists.newArrayList();
-        Map<String, Field> fieldMap = Maps.newHashMap();
         BufferedReader br = new BufferedReader(new FileReader(fileNameMap.get(clazz.getSimpleName())));
         String line = "";
 
@@ -181,52 +199,38 @@ public class Generator {
             if (line.contains("class")) {
                 isBegin = true;
             }
-
         }
 
         Field[] fields = clazz.getDeclaredFields();
-        List<String> find = Lists.newArrayList();
-        for (Field field : fields) {
-            fieldMap.put(field.getType().getSimpleName() + " " + field.getName(), field);
-            find.add(field.getType().getName() + " " + field.getName());
-        }
+
+        FieldZ fieldZ = new FieldZ();
+        String desc = "";
+        //status=1代表解析开始
+        Integer status = 0;
         for (int i = 0; i < lines.size(); i++) {
-            for (String s : find) {
-                if (lines.get(i).contains(s)) {
-                    // TODO: 4/10/18 解析
-                    String desc = "";
-                    for (int j = i - 1; j >= 0; j--) {
-                        if (lines.get(j).contains(";")) {
-                            break;
-                        }
-                        desc = lines.get(j) + desc;
-                    }
-                    desc = desc.replace("/", "");
-                    desc = desc.replace("*", "");
-                    FieldZ fieldZ = new FieldZ();
-                    fieldZ.setDesc(desc);
-                    Field field = fieldMap.get(s);
-                    fieldZ.setFieldName(field.getName());
-                    fieldZ.setType(field.getType().getName());
-                    result.add(fieldZ);
+            String currentLine = lines.get(i).trim();
+            if (currentLine.startsWith("/**")) {
+                status = 1;
+                desc = "";
+            } else if (currentLine.startsWith("*/")) {
+                if (status == 1) {
+                    status = 2;
+                }
+            } else if (currentLine.startsWith("*")) {
+                desc += currentLine.substring(1, currentLine.length());
+            } else {
+                if (currentLine.endsWith(";") && status == 2) {
+                    String[] words = currentLine.substring(0, currentLine.length() - 1).split(" ");
+                    fieldZ.setFieldName(words[words.length - 1]);
+                    fieldZ.setDesc(new String(desc));
+                    fieldZ.setType(Converter.replace(words[words.length - 2]));
+                    status = 0;
+                    result.add(new FieldZ(fieldZ));
+                    fieldZ = new FieldZ();
+                    desc = "";
                 }
             }
         }
         return result;
-    }
-
-    // TODO: 4/10/18 添加动态加载
-//    public static void compiler(String name) throws IOException {
-//        String javaPackageName = name.replace(".",File.separator)+".java";
-//        String javaAbsolutePath = classPath+javaPackageName;
-//        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-//        compiler.run(null,null,null,"-encoding","UTF-8","-classpath",jarAbsolutePath.toString(),javaAbsolutePath);
-//    }
-
-    public static void main(String[] args) throws Exception {
-        Generator generator = new Generator();
-        generator.parseInterfaceInfo("/home/jinyan/Documents/github/toos/src/main/java/swa/tools", "CreditBankinfoMapper", "", "", "countByExample");
-        System.out.println(generator.fileNameMap);
-        System.out.println(generator.interfaceZ);
     }
 }

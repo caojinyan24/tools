@@ -32,16 +32,16 @@ public class ClassZ {
         return packageName;
     }
 
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
     public Class getClazz() {
         return clazz;
     }
 
     public void setClazz(Class clazz) {
         this.clazz = clazz;
-    }
-
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
     }
 
     public String getClassDesc() {
