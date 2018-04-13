@@ -31,7 +31,7 @@ public class Response {
     /**
      * aa
      */
-    private boolean listValue;
+    private CreditBankinfoExample listValue;
     /**
      * aa
      */
@@ -85,11 +85,11 @@ public class Response {
         this.betweenValue = betweenValue;
     }
 
-    public boolean isListValue() {
+    public CreditBankinfoExample getListValue() {
         return listValue;
     }
 
-    public void setListValue(boolean listValue) {
+    public void setListValue(CreditBankinfoExample listValue) {
         this.listValue = listValue;
     }
 

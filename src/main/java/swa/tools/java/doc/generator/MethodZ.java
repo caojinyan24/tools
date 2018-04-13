@@ -4,7 +4,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * Created by jinyan on 4/10/18 5:18 PM.
+ *
+ * @author jinyan
+ * @date 4/10/18 5:18 PM
  */
 public class MethodZ {
     private List<ClassZ> requests;

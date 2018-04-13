@@ -13,9 +13,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by jinyan on 4/10/18 4:25 PM.
@@ -23,6 +22,7 @@ import java.util.Map;
 public class Generator {
     private static final Logger logger = LoggerFactory.getLogger(Generator.class);
     private Map<String, String> fileNameMap = Maps.newHashMap();
+    private Map<String, Class> classMap = Maps.newHashMap();
 
     public static void main(String[] args) throws Exception {
         Generator generator = new Generator();
@@ -41,7 +41,7 @@ public class Generator {
     public InterfaceZ parseInterfaceInfo(String projectDir, String className, String docName, String authorName, String methodName) throws Exception {
         InterfaceZ interfaceZ = new InterfaceZ();
 
-        iteratorPath(projectDir);
+        iteratorForInfo(projectDir);
         String fileName = fileNameMap.get(className);
 
         interfaceZ.setAuthor(authorName);
@@ -94,7 +94,6 @@ public class Generator {
                         break;
                     }
                 }
-
                 MethodZ methodZ = new MethodZ();
                 String descS = desc.toString();
                 descS = descS.replace("/", "");
@@ -127,13 +126,58 @@ public class Generator {
         }
     }
 
+    private void iteratorForInfo(String dir) throws Exception {
+        iteratorPath(dir);
+        Set<Map.Entry<String, String>> entrySet = fileNameMap.entrySet();
+        for (Map.Entry entry : entrySet) {
+            BufferedReader br = new BufferedReader(new FileReader((String) entry.getValue()));
+            String line = "";
+            String tempJoin = "";
+            while ((line = br.readLine()) != null) {
+                if (line.contains("package")) {
+                    line = line.replace("package", "").replace(";", "").trim();
+                    classMap.put((String) entry.getKey(), Class.forName(line + "." + entry.getKey()));
+                    break;
+                }
+            }
+        }
+        System.out.println("classMap:" + classMap);
+    }
+
     //请求或响应
-    // TODO: 4/13/18 添加多个参数解析
     private List<ClassZ> parseClassZInfo(Class<?>[] classes) throws Exception {
+        int i = 0;
+
+        List<ClassZ> result = new CopyOnWriteArrayList<ClassZ>();
+        List<ClassZ> temp;
+        for (Class c : classes) {
+            temp = parseClassZInfo(c);
+            result.addAll(temp);
+            i += temp.size();
+        }
+        //标示下次插入的位置
+        for (ClassZ classZ:result) {
+            Iterator<ClassZ> iterator = result.iterator();
+            while (iterator.hasNext()) {
+                ClassZ z = iterator.next();
+                for (FieldZ fieldZ : z.getFieldList()) {
+                    for (String key : fileNameMap.keySet()) {
+                        if (fieldZ.getType().contains(key)) {
+                            String fileName = fileNameMap.get(key);
+                            fileName = fileName.substring(0, fileName.length() - 5);
+                            temp = parseClassZInfo(classMap.get(key));
+                            result.addAll(temp);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private List<ClassZ> parseClassZInfo(Class cla) throws Exception {
         List<ClassZ> list = Lists.newArrayList();
         ClassZ result = new ClassZ();
-        // TODO: 4/10/18 根据classes 处理类嵌套的情况
-        Class cla = classes[0];
         if (cla == null) {
             throw new ToolsException("class load error");
         }
@@ -172,10 +216,8 @@ public class Generator {
         result.setPackageName(packageName);
         result.setClazz(cla);
         result.setFieldList(parseFieldZInfo(cla));
-
         return Lists.newArrayList(result);
     }
-
     // TODO: 4/10/18 添加动态加载
 //    public static void compiler(String name) throws IOException {
 //        String javaPackageName = name.replace(".",File.separator)+".java";
