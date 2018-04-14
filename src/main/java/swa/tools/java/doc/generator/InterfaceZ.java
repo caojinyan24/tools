@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by jinyan on 4/10/18 4:21 PM.
+ *
+ * @author jinyan
+ * @date 4/10/18 4:21 PM
  */
 public class InterfaceZ {
     private List<MethodZ> methodZS;
@@ -59,6 +61,7 @@ public class InterfaceZ {
         return time;
     }
 
+
     public void setTime(Date time) {
         this.time = time;
     }
@@ -73,7 +76,7 @@ public class InterfaceZ {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("InterfaceZ{");
+        final StringBuilder sb = new StringBuilder("InterfaceZ{");
         sb.append("methodZS=").append(methodZS);
         sb.append(", packageName='").append(packageName).append('\'');
         sb.append(", className='").append(className).append('\'');

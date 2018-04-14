@@ -1,7 +1,9 @@
 package swa.tools.java.doc.generator;
 
 /**
- * Created by jinyan on 4/10/18 4:20 PM.
+ *
+ * @author jinyan
+ * @date 4/10/18 4:20 PM
  */
 public class FieldZ {
     private String type;

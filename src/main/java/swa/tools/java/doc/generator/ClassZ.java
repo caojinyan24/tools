@@ -3,7 +3,9 @@ package swa.tools.java.doc.generator;
 import java.util.List;
 
 /**
- * Created by jinyan on 4/10/18 5:11 PM.
+ *
+ * @author jinyan
+ * @date 4/10/18 5:11 PM
  */
 public class ClassZ {
     private List<FieldZ> fieldList;
@@ -54,7 +56,7 @@ public class ClassZ {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("ClassZ{");
+        final StringBuilder sb = new StringBuilder("ClassZ{");
         sb.append("fieldList=").append(fieldList);
         sb.append(", className='").append(className).append('\'');
         sb.append(", packageName='").append(packageName).append('\'');

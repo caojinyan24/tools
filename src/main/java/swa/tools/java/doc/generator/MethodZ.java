@@ -57,7 +57,7 @@ public class MethodZ {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("MethodZ{");
+        final StringBuilder sb = new StringBuilder("MethodZ{");
         sb.append("requests=").append(requests);
         sb.append(", responses=").append(responses);
         sb.append(", methodName='").append(methodName).append('\'');
