@@ -1,4 +1,4 @@
-package swa.tools.java.doc.generator;
+package swa.tools.java.doc.generator.doc;
 
 import java.util.Date;
 import java.util.List;

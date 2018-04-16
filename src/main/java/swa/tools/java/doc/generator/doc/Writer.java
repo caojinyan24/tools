@@ -1,4 +1,4 @@
-package swa.tools.java.doc.generator;
+package swa.tools.java.doc.generator.doc;
 
 import freemarker.ext.beans.BeanModel;
 import freemarker.ext.beans.BeansWrapper;
@@ -42,7 +42,7 @@ public class Writer {
                     return new BeanModel(obj, new BeansWrapper(VERSION_2_3_28));
                 }
             });
-            w = new OutputStreamWriter(new FileOutputStream("aa.md"));
+            w = new OutputStreamWriter(new FileOutputStream("docs/" + interfaceZ.getClassName() + "Doc.md"));
             configuration.getTemplate(templateName).process(interfaceZ, w);
             w.flush();
         } finally {

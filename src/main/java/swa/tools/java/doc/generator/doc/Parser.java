@@ -1,11 +1,11 @@
-package swa.tools.java.doc.generator;
+package swa.tools.java.doc.generator.doc;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import swa.tools.Common.ToolsException;
+import swa.tools.common.ToolsException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -161,7 +161,6 @@ public class Parser {
         if (cla == null) {
             throw new ToolsException("class load error");
         }
-        System.out.println(cla.getPackage());
         String packageName = String.valueOf(cla.getPackage());
 
         if (Strings.isNullOrEmpty(fileNameMap.get(cla.getSimpleName()))) {

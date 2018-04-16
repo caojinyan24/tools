@@ -1,13 +1,13 @@
-package swa.tools.java.doc.generator.test;
+package swa.tools.java.doc.generator.doc.test;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
- * 华道查询不良信息的结果参数
+ * 结果参数
  * Created by jinyan on 4/9/18 2:31 PM.
  */
-public class IllegalInfoResponseDto implements Serializable {
+public class ResponseDto implements Serializable {
 
     private static final long serialVersionUID = 776156567975259255L;
     /**

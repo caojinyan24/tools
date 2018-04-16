@@ -14,11 +14,7 @@ dubbo接口文档
 Maven：
 
 ~~~
-<dependency>
-    <groupId>credit-yooli</groupId>
-    <artifactId>credit-fourelement-intf</artifactId>
-    <version>4.0.1</version>
-</dependency>
+//补充
 ~~~
 
 

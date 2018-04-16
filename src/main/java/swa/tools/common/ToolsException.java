@@ -1,4 +1,4 @@
-package swa.tools.Common;
+package swa.tools.common;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

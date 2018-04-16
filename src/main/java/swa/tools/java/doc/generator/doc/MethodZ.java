@@ -1,4 +1,4 @@
-package swa.tools.java.doc.generator;
+package swa.tools.java.doc.generator.doc;
 
 import java.lang.reflect.Method;
 import java.util.List;
