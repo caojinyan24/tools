@@ -8,6 +8,7 @@ import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import swa.tools.java.doc.generator.doclet.InterfaceZ;
 
 import java.io.File;
 import java.io.FileOutputStream;

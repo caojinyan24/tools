@@ -1,4 +1,4 @@
-package swa.tools.java.doc.generator.doc;
+package swa.tools.java.doc.generator.doclet;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -6,10 +6,6 @@ import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import swa.tools.common.ToolsException;
-import swa.tools.java.doc.generator.doclet.ClassZ;
-import swa.tools.java.doc.generator.doclet.FieldZ;
-import swa.tools.java.doc.generator.doclet.InterfaceZ;
-import swa.tools.java.doc.generator.doclet.MethodZ;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,6 +25,9 @@ public class Parser {
     private static final Logger logger = LoggerFactory.getLogger(Parser.class);
     private Map<String, String> fileNameMap = Maps.newHashMap();
     private Map<String, Class> classMap = Maps.newHashMap();
+    /**
+     * projectDir
+     */
     private String projectDir;
     private String className;
     private String methodName;
@@ -48,7 +47,7 @@ public class Parser {
     }
 
 
-    InterfaceZ parseInterfaceInfo() throws Exception {
+   public InterfaceZ parseInterfaceInfo() throws Exception {
         InterfaceZ interfaceZ = new InterfaceZ();
 
 
@@ -239,7 +238,7 @@ public class Parser {
                     String[] words = currentLine.substring(0, currentLine.length() - 1).split(" ");
                     fieldZ.setFieldName(words[words.length - 1]);
                     fieldZ.setDesc(desc.toString());
-                    fieldZ.setType(Converter.replace(words[words.length - 2]));
+//                    fieldZ.setType(Converter.replace(words[words.length - 2]));
                     status = 0;
                     result.add(new FieldZ(fieldZ));
                     fieldZ = new FieldZ();
