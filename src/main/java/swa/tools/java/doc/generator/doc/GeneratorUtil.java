@@ -22,11 +22,16 @@ public class GeneratorUtil {
      * @throws Exception ‘’
      */
     public static void main(String[] args) throws Exception {
-        String className = "TestInterface";
+        //待生成的类
+        String className = "IScanningPersonalReportService";
+        //待生成的类的方法,为null时生成接口类的所有方法
         String methodName = "query";
+        //文档作者
         String author = "jinyan.cao";
-        String docName = "donjjio*********";
-        String templateName = "yooliCreditPlatformTemplate.ftl";
+        //文档名称
+        String docName = "DocName";
+        //生成文档选用的模板名称
+        String templateName = "javaDocTemplate.ftl";
         String dir = new File("").getAbsolutePath() + "/src/main/java/swa/tools/java/doc/generator/doc/test/";
         InterfaceZ interfaceZ = parseFromLocal(dir, className, methodName, docName, author);
         new Writer(templateName).write(interfaceZ);
@@ -46,74 +51,6 @@ public class GeneratorUtil {
     private static InterfaceZ parseFromLocal(String dir, String className, String methodName, String docName, String author) throws Exception {
         return new Parser(dir, className, methodName, docName, author).parseInterfaceInfo();
     }
-//
-//    /**
-//     * 通过动态编辑加载类
-//     * 这种方式不需要把要处理的类拷贝到test目录下，但是需要保证文件中的引用都能被引进来，否则将无法动态编译
-//     *
-//     * @param dir        要加载的文件所在的目录
-//     * @param className  要生成文档的类名
-//     * @param methodName 接口名
-//     * @param docName    生成文档的名称
-//     * @param author     生成文档的作者
-//     * @return 最终解析完成的接口信息
-//     * @throws Exception ‘’
-//     */
-//    private static InterfaceZ parseFromDynamicLoad(String dir, String className, String methodName, String docName, String author) throws Exception {
-//        loadClasses(dir);
-//        return parseFromLocal(dir, className, methodName, docName, author);
-//    }
-//
-//
-//    // 加载根目录下的所有文件
-//    private static void loadClasses(String dir) {
-//        File or = new File(dir);
-//        File[] files = or.listFiles();
-//        if (files != null) {
-//            for (File file : files) {
-//                if (file.isFile() && file.getName().endsWith(".java")) {
-//                    FILES.add(file.getPath());
-//                    logger.info("files:{}", FILES);
-//                } else if (file.isDirectory()) {
-//                    loadClasses(file.getAbsolutePath());
-//                }
-//            }
-//        }
-//        while (true) {
-//            for (String f : FILES) {
-//                if (compiler(f) == 0 || !FILES.contains(f)) {
-//                    FILES.remove(f);
-//                }
-//            }
-//            if (FILES.isEmpty()) {
-//                break;
-//            }
-//        }
-//    }
-//
-//    /**
-//     * 动态编译，生成.class文件
-//     *
-//     * @param name 类名
-//     * @return 0代表成功
-//     */
-//    private static Integer compiler(String name) {
-//        OutputStream outputStream = null;
-//        try {
-//            JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
-//            return javaCompiler.run(null, null, null, name);
-//        } catch (Throwable e) {
-//            logger.error("parseError:{}", e);
-//            return -1;
-//        } finally {
-//            try {
-//                if (outputStream != null) {
-//                    outputStream.close();
-//                }
-//            } catch (IOException e) {
-//            }
-//        }
-//    }
 
 
 }

@@ -4,13 +4,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author jinyan
  * @date 4/10/18 4:21 PM
  */
 public class InterfaceZ {
     private List<MethodZ> methodZS;
-    private String packageName;
     private String className;
     private String author;
     private String docName;
@@ -25,13 +23,6 @@ public class InterfaceZ {
         this.methodZS = methodZS;
     }
 
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
-    }
 
     public String getClassName() {
         return className;
@@ -78,7 +69,6 @@ public class InterfaceZ {
     public String toString() {
         final StringBuilder sb = new StringBuilder("InterfaceZ{");
         sb.append("methodZS=").append(methodZS);
-        sb.append(", packageName='").append(packageName).append('\'');
         sb.append(", className='").append(className).append('\'');
         sb.append(", author='").append(author).append('\'');
         sb.append(", docName='").append(docName).append('\'');

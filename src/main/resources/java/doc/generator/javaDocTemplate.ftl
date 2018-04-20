@@ -1,14 +1,21 @@
 【${docName}】
 
 dubbo接口文档
-<#--${time?string("yyyy-MM-dd")}-->
+${time?string("yyyy-MM-dd")}
 
 版本历史
 
 |文档版本|撰写时间|变更人|属性|
 |--|--|--|--|
-|V1.0|2018-04-10|${author}|新增|
+|V1.0|${time?string("yyyy-MM-dd")}|${author}|新增|
 
+
+# 依赖地址
+Maven：
+
+~~~
+//补充
+~~~
 
 
 # 调用说明
@@ -23,7 +30,7 @@ dubbo接口文档
 
     <#list method.requests as request>
 
-    接口请求参数：`${request.className}`
+接口请求参数：`${request.className}`
 
         <#if request.fieldList ?? && (request.fieldList ?size > 0) >
 

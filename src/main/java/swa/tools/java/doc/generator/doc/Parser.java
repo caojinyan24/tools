@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 import swa.tools.common.ToolsException;
 
 import java.io.BufferedReader;
@@ -43,29 +44,22 @@ public class Parser {
         this.author = author;
     }
 
-
     InterfaceZ parseInterfaceInfo() throws Exception {
         InterfaceZ interfaceZ = new InterfaceZ();
-
-
         iteratorForInfo(projectDir);
         String fileName = fileNameMap.get(className);
-        String packageName = "";
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         String line;
         List<String> lines = Lists.newArrayList();
         while ((line = br.readLine()) != null) {
             if (line.startsWith("package")) {
-                packageName = line.split(" ")[1];
-                packageName = packageName.substring(0, packageName.length() - 1);
                 continue;
             }
             lines.add(line);
         }
         interfaceZ.setClassName(className);
-        interfaceZ.setPackageName(packageName);
         interfaceZ.setTime(new Date());
-        interfaceZ.setClazz(Class.forName(packageName + "." + className));
+        interfaceZ.setClazz(Class.forName("swa.tools.java.doc.generator.doc.test." + className));
         interfaceZ.setDocName(docName);
         interfaceZ.setAuthor(author);
 
@@ -74,7 +68,7 @@ public class Parser {
 
 
         for (Method method : methods) {
-            if (method.getName().equals(methodName) || !Strings.isNullOrEmpty(methodName)) {
+            if (method.getName().equals(methodName) || Strings.isNullOrEmpty(methodName)) {
                 StringBuilder desc = new StringBuilder();
                 for (String currentLine : lines) {
                     if (currentLine.contains(";")) {
@@ -96,7 +90,17 @@ public class Parser {
                 methodZ.setMethod(method);
                 methodZ.setMethodName(method.getName());
                 methodZ.setRequests(parseClassZInfo(method.getParameterTypes()));
-                methodZ.setResponses(parseClassZInfo(new Class[]{method.getReturnType()}));
+
+                List<Class> classes = Lists.newArrayList();
+                ParameterizedTypeImpl type = (ParameterizedTypeImpl) method.getGenericReturnType();
+                for (String key : fileNameMap.keySet()) {
+                    if (type.getTypeName().contains(key)) {
+                        classes.add(classMap.get(key));
+                    }
+                }
+                Class[] tt = new Class[]{};
+                methodZ.setResponses(parseClassZInfo(classes.toArray(tt)));
+
                 methodZs.add(methodZ);
             }
         }
@@ -156,7 +160,8 @@ public class Parser {
         return result;
     }
 
-    private List<ClassZ> parseClassZInfo(Class cla) throws Exception {
+
+    private List<ClassZ> parseClassZInfo(Class<?> cla) throws Exception {
         ClassZ result = new ClassZ();
         if (cla == null) {
             throw new ToolsException("class load error");
@@ -189,7 +194,7 @@ public class Parser {
             desc.append(lines.get(i));
         }
         result.setClassDesc(desc.toString());
-        result.setClassName(cla.getName());
+        result.setClassName(cla.getSimpleName());
         result.setPackageName(packageName);
         result.setClazz(cla);
         result.setFieldList(parseFieldZInfo(cla));

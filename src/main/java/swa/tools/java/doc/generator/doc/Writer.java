@@ -1,11 +1,6 @@
 package swa.tools.java.doc.generator.doc;
 
-import freemarker.ext.beans.BeanModel;
-import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
-import freemarker.template.ObjectWrapper;
-import freemarker.template.TemplateModel;
-import freemarker.template.TemplateModelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +31,6 @@ public class Writer {
             Configuration configuration = new Configuration(VERSION_2_3_28);
             configuration.setDirectoryForTemplateLoading(new File(new File("").getAbsolutePath() + "/src/main/resources/java/doc/generator"));
             configuration.setDateTimeFormat("yyyy-MM-dd");
-            configuration.setObjectWrapper(new ObjectWrapper() {
-                @Override
-                public TemplateModel wrap(Object obj) throws TemplateModelException {
-                    return new BeanModel(obj, new BeansWrapper(VERSION_2_3_28));
-                }
-            });
             w = new OutputStreamWriter(new FileOutputStream("docs/" + interfaceZ.getClassName() + "Doc.md"));
             configuration.getTemplate(templateName).process(interfaceZ, w);
             w.flush();
