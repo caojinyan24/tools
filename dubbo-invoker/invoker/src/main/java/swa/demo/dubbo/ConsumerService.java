@@ -11,7 +11,7 @@ public class ConsumerService {
 
 
     public static void main(String[] args) throws Exception {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"consumer.xml"});
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"demo.dubbo/consumer.xml"});
         context.start();
         // obtain proxy object for remote invocation
         ProviderService providerService = (ProviderService) context.getBean("providerService");

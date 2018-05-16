@@ -6,6 +6,6 @@
     <dubbo:application name="demo-provider"/>
     <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
     <dubbo:protocol name="dubbo" port="20881"/>
-    <dubbo:service interface="swa.ProviderService" ref="providerService"/>
+    <dubbo:service interface="swa.ProviderService" ref="providerService" />
     <bean id="providerService" class="swa.demo.dubbo.ProviderServiceImpl"/>
 </beans>

@@ -16,7 +16,7 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     public static void main(String[] args) throws IOException {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"provider.xml"});
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"demo.dubbo/provider.xml"});
         context.start();
         System.in.read();
     }

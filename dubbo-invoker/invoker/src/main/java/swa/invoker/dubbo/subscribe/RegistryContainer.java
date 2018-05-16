@@ -10,12 +10,17 @@ import com.alibaba.dubbo.container.Container;
 import com.alibaba.dubbo.container.spring.SpringContainer;
 import com.alibaba.dubbo.registry.NotifyListener;
 import com.alibaba.dubbo.registry.RegistryService;
+import com.alibaba.dubbo.registry.zookeeper.ZookeeperRegistry;
+import com.alibaba.dubbo.registry.zookeeper.ZookeeperRegistryFactory;
+import com.alibaba.dubbo.remoting.zookeeper.curator.CuratorZookeeperTransporter;
+import com.alibaba.dubbo.remoting.zookeeper.zkclient.ZkclientZookeeperTransporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,7 +37,14 @@ public class RegistryContainer implements Container {
     private final Set<String> services = new ConcurrentHashSet<String>();
     private final Map<String, List<URL>> serviceProviders = new ConcurrentHashMap<String, List<URL>>();
     private final Map<String, List<URL>> serviceConsumers = new ConcurrentHashMap<String, List<URL>>();
-    private RegistryService registry;
+    //    @Resource
+    private RegistryService registryService;
+
+    @PostConstruct
+    public void setUp() {
+
+        start();
+    }
 
     public RegistryContainer() {
         INSTANCE = this;
@@ -46,7 +58,7 @@ public class RegistryContainer implements Container {
     }
 
     public RegistryService getRegistry() {
-        return registry;
+        return registryService;
     }
 
     public Set<String> getApplications() {
@@ -174,22 +186,29 @@ public class RegistryContainer implements Container {
         return urls;
     }
 
-    @PostConstruct
     public void start() {
-        String url = ConfigUtils.getProperty(REGISTRY_ADDRESS);
-        if (url == null || url.length() == 0) {
-            throw new IllegalArgumentException("Please set java start argument: -D" + REGISTRY_ADDRESS + "=zookeeper://127.0.0.1:2181");
-        }
-        registry = (RegistryService) SpringContainer.getContext().getBean("registryService");
-        URL subscribeUrl = new URL(Constants.ADMIN_PROTOCOL, NetUtils.getLocalHost(), 0, "",
-                Constants.INTERFACE_KEY, Constants.ANY_VALUE,
-                Constants.GROUP_KEY, Constants.ANY_VALUE,
-                Constants.VERSION_KEY, Constants.ANY_VALUE,
-                Constants.CLASSIFIER_KEY, Constants.ANY_VALUE,
-                Constants.CATEGORY_KEY, Constants.PROVIDERS_CATEGORY + ","
-                + Constants.CONSUMERS_CATEGORY,
-                Constants.CHECK_KEY, String.valueOf(false));
-        registry.subscribe(subscribeUrl, new NotifyListener() {
+//        String url = ConfigUtils.getProperty(REGISTRY_ADDRESS);
+//        if (url == null || url.length() == 0) {
+//            throw new IllegalArgumentException("Please set java start argument: -D" + REGISTRY_ADDRESS + "=zookeeper://127.0.0.1:2181");
+//        }
+//        String url = "zookeeper://127.0.0.1:2181";
+//        registryService = (RegistryService) SpringContainer.getContext().getBean("registryService");
+//        URL subscribeUrl = new URL(Constants.ADMIN_PROTOCOL, NetUtils.getLocalHost(), 0, "",
+//                Constants.INTERFACE_KEY, Constants.ANY_VALUE,
+//                Constants.GROUP_KEY, Constants.ANY_VALUE,
+//                Constants.VERSION_KEY, Constants.ANY_VALUE,
+//                Constants.CLASSIFIER_KEY, Constants.ANY_VALUE,
+//                Constants.CATEGORY_KEY, Constants.PROVIDERS_CATEGORY + ","
+//                + Constants.CONSUMERS_CATEGORY,
+//                Constants.CHECK_KEY, String.valueOf(false));
+//        URL subscribeUrl=new URL(Constants.ADMIN_PROTOCOL,"127.0.0.1",2181);
+        URL subscribeUrl = URL.valueOf("zookeeper://127.0.0.1:2181");
+        URL serviceUrl = URL.valueOf("zookeeper://zookeeper/*");
+        ZookeeperRegistryFactory zookeeperRegistryFactory = new ZookeeperRegistryFactory();
+        zookeeperRegistryFactory.setZookeeperTransporter(new ZkclientZookeeperTransporter());
+        registryService = zookeeperRegistryFactory.createRegistry(subscribeUrl);
+
+        registryService.subscribe(serviceUrl, new NotifyListener() {
             public void notify(List<URL> urls) {
                 if (urls == null || urls.size() == 0) {
                     return;
